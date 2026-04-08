@@ -1,5 +1,6 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useApp } from "@/store/AppContext";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { calculateRecipeNutrients } from "@/lib/nutrition";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,12 +13,13 @@ export default function RecipeDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { recipes, foods, nutrients, addCookingLog, deleteRecipe } = useApp();
+  const { t } = useLanguage();
 
   const recipe = recipes.find((r) => r.id === id);
   if (!recipe) {
     return (
       <div className="flex min-h-screen items-center justify-center pb-20">
-        <p className="text-muted-foreground">レシピが見つかりません</p>
+        <p className="text-muted-foreground">{t("recipeNotFound")}</p>
       </div>
     );
   }
@@ -30,13 +32,13 @@ export default function RecipeDetailPage() {
       recipeId: recipe!.id,
       cookedAt: new Date().toISOString(),
     });
-    toast.success("調理記録を追加しました！🎉");
+    toast.success(t("cookingLogged"));
   }
 
   function handleDelete() {
-    if (confirm("このレシピを削除しますか？")) {
+    if (confirm(t("deleteRecipeConfirm"))) {
       deleteRecipe(recipe!.id);
-      toast.success("レシピを削除しました");
+      toast.success(t("recipeDeleted"));
       navigate("/recipes");
     }
   }
@@ -61,16 +63,14 @@ export default function RecipeDetailPage() {
       />
 
       <div className="space-y-4 p-4">
-        {/* Cook Button */}
         <Button onClick={handleCooked} className="w-full" size="lg">
           <CookingPot className="mr-2 h-5 w-5" />
-          作った！
+          {t("cooked")}
         </Button>
 
-        {/* Nutrition */}
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">🥗 栄養素</CardTitle>
+            <CardTitle className="text-base">{t("nutrition")}</CardTitle>
           </CardHeader>
           <CardContent>
             <NutrientBadges summaries={rn} />
@@ -89,12 +89,11 @@ export default function RecipeDetailPage() {
           </CardContent>
         </Card>
 
-        {/* Ingredients */}
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">🥘 材料</CardTitle>
+            <CardTitle className="text-base">{t("ingredientsSection")}</CardTitle>
             {recipe.servings > 0 && (
-              <p className="text-xs text-muted-foreground">{recipe.servings}人前</p>
+              <p className="text-xs text-muted-foreground">{recipe.servings}{t("servingsUnit")}</p>
             )}
           </CardHeader>
           <CardContent>
@@ -106,7 +105,7 @@ export default function RecipeDetailPage() {
                     key={idx}
                     className="flex items-center justify-between rounded-md px-2 py-1 odd:bg-secondary/50"
                   >
-                    <span className="text-sm font-medium">{food?.name || "不明"}</span>
+                    <span className="text-sm font-medium">{food?.name || t("unknown")}</span>
                     <span className="text-sm text-muted-foreground">
                       {ing.quantityText || ing.quantityValue} {ing.unit}
                     </span>
@@ -117,11 +116,10 @@ export default function RecipeDetailPage() {
           </CardContent>
         </Card>
 
-        {/* Steps */}
         {recipe.steps.length > 0 && (
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-base">📝 手順</CardTitle>
+              <CardTitle className="text-base">{t("stepsSection")}</CardTitle>
             </CardHeader>
             <CardContent>
               <ol className="space-y-2">

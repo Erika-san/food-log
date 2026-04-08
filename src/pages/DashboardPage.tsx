@@ -1,4 +1,5 @@
 import { useApp } from "@/store/AppContext";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { getWeeklyNutrients, calculateRecipeNutrients } from "@/lib/nutrition";
 import { Link } from "react-router-dom";
 import { Plus, ChefHat, TrendingDown } from "lucide-react";
@@ -6,9 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import NutrientBadges from "@/components/NutrientBadges";
 import PageHeader from "@/components/PageHeader";
+import LanguageToggle from "@/components/LanguageToggle";
 
 export default function DashboardPage() {
   const { recipes, cookingLogs, foods, nutrients } = useApp();
+  const { t } = useLanguage();
 
   const weeklyNutrients = getWeeklyNutrients(cookingLogs, recipes, foods, nutrients);
   const recentLogs = [...cookingLogs]
@@ -22,22 +25,24 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen pb-20">
       <PageHeader
-        title="🍽️ ごはん記録"
+        title={t("dashboardTitle")}
         action={
-          <Link to="/recipes/new">
-            <Button size="sm">
-              <Plus className="mr-1 h-4 w-4" />
-              レシピ追加
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <LanguageToggle />
+            <Link to="/recipes/new">
+              <Button size="sm">
+                <Plus className="mr-1 h-4 w-4" />
+                {t("addRecipe")}
+              </Button>
+            </Link>
+          </div>
         }
       />
 
       <div className="space-y-4 p-4">
-        {/* Weekly Summary */}
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">📊 過去7日間の栄養</CardTitle>
+            <CardTitle className="text-base">{t("weeklyNutrition")}</CardTitle>
           </CardHeader>
           <CardContent>
             {weeklyNutrients.length > 0 && cookingLogs.length > 0 ? (
@@ -54,20 +59,17 @@ export default function DashboardPage() {
                   ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">
-                まだ料理の記録がありません。レシピを作って「作った」ボタンを押しましょう！
-              </p>
+              <p className="text-sm text-muted-foreground">{t("noRecordsYet")}</p>
             )}
           </CardContent>
         </Card>
 
-        {/* Low Nutrients */}
         {cookingLogs.length > 0 && (
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-base">
                 <TrendingDown className="h-4 w-4 text-warning" />
-                不足しがちな栄養素
+                {t("lowNutrients")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -89,12 +91,11 @@ export default function DashboardPage() {
           </Card>
         )}
 
-        {/* Recent Cooking */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               <ChefHat className="h-4 w-4" />
-              最近作った料理
+              {t("recentCooking")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -124,18 +125,17 @@ export default function DashboardPage() {
                 })}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">まだ記録がありません</p>
+              <p className="text-sm text-muted-foreground">{t("noRecords")}</p>
             )}
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-3">
           <Link to="/recipes">
             <Card className="cursor-pointer transition-colors hover:bg-secondary">
               <CardContent className="flex items-center gap-2 p-4">
                 <BookOpenIcon className="h-5 w-5 text-primary" />
-                <span className="text-sm font-medium">レシピ一覧</span>
+                <span className="text-sm font-medium">{t("recipeList")}</span>
               </CardContent>
             </Card>
           </Link>
@@ -143,7 +143,7 @@ export default function DashboardPage() {
             <Card className="cursor-pointer transition-colors hover:bg-secondary">
               <CardContent className="flex items-center gap-2 p-4">
                 <HistoryIcon className="h-5 w-5 text-primary" />
-                <span className="text-sm font-medium">調理履歴</span>
+                <span className="text-sm font-medium">{t("cookingHistory")}</span>
               </CardContent>
             </Card>
           </Link>

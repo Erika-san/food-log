@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useApp } from "@/store/AppContext";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { calculateRecipeNutrients } from "@/lib/nutrition";
 import { Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import PageHeader from "@/components/PageHeader";
 
 export default function RecipeListPage() {
   const { recipes, foods, nutrients } = useApp();
+  const { t, language } = useLanguage();
   const [search, setSearch] = useState("");
 
   const filtered = recipes.filter((r) => {
@@ -26,12 +28,12 @@ export default function RecipeListPage() {
   return (
     <div className="min-h-screen pb-20">
       <PageHeader
-        title="レシピ一覧"
+        title={t("recipeListTitle")}
         action={
           <Link to="/recipes/new">
             <Button size="sm">
               <Plus className="mr-1 h-4 w-4" />
-              新規作成
+              {t("createNew")}
             </Button>
           </Link>
         }
@@ -41,7 +43,7 @@ export default function RecipeListPage() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="レシピ名・食材で検索..."
+            placeholder={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10"
@@ -51,13 +53,11 @@ export default function RecipeListPage() {
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-12">
             <p className="text-muted-foreground">
-              {recipes.length === 0
-                ? "レシピがまだありません"
-                : "検索結果がありません"}
+              {recipes.length === 0 ? t("noRecipes") : t("noSearchResults")}
             </p>
             {recipes.length === 0 && (
               <Link to="/recipes/new">
-                <Button>最初のレシピを作る</Button>
+                <Button>{t("createFirstRecipe")}</Button>
               </Link>
             )}
           </div>
@@ -73,8 +73,8 @@ export default function RecipeListPage() {
                         <div>
                           <h3 className="font-semibold">{recipe.name}</h3>
                           <p className="mt-0.5 text-xs text-muted-foreground">
-                            材料 {recipe.ingredients.length}品
-                            {recipe.servings > 0 && ` · ${recipe.servings}人前`}
+                            {t("ingredientCount")} {recipe.ingredients.length}{language === "ja" ? "品" : ""}
+                            {recipe.servings > 0 && ` · ${recipe.servings}${t("servingsUnit")}`}
                           </p>
                         </div>
                       </div>
