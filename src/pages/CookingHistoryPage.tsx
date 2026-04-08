@@ -1,4 +1,5 @@
 import { useApp } from "@/store/AppContext";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { calculateRecipeNutrients } from "@/lib/nutrition";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,29 +10,29 @@ import { toast } from "sonner";
 
 export default function CookingHistoryPage() {
   const { cookingLogs, recipes, foods, nutrients, deleteCookingLog } = useApp();
+  const { t, language } = useLanguage();
 
   const sorted = [...cookingLogs].sort(
     (a, b) => new Date(b.cookedAt).getTime() - new Date(a.cookedAt).getTime()
   );
 
-  // Group by date
   const grouped: Record<string, typeof sorted> = {};
   for (const log of sorted) {
-    const dateKey = new Date(log.cookedAt).toLocaleDateString("ja-JP");
+    const dateKey = new Date(log.cookedAt).toLocaleDateString(language === "ja" ? "ja-JP" : "en-US");
     if (!grouped[dateKey]) grouped[dateKey] = [];
     grouped[dateKey].push(log);
   }
 
   return (
     <div className="min-h-screen pb-20">
-      <PageHeader title="調理履歴" />
+      <PageHeader title={t("cookingHistoryTitle")} />
 
       <div className="space-y-4 p-4">
         {sorted.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-12">
-            <p className="text-muted-foreground">まだ調理の記録がありません</p>
+            <p className="text-muted-foreground">{t("noCookingHistory")}</p>
             <Link to="/recipes" className="text-sm text-primary underline">
-              レシピ一覧へ
+              {t("goToRecipes")}
             </Link>
           </div>
         ) : (
@@ -55,7 +56,7 @@ export default function CookingHistoryPage() {
                         <button
                           onClick={() => {
                             deleteCookingLog(log.id);
-                            toast.success("記録を削除しました");
+                            toast.success(t("recordDeleted"));
                           }}
                           className="ml-2 text-muted-foreground hover:text-destructive"
                         >

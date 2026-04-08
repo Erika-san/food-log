@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useApp } from "@/store/AppContext";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { calculateGramsUsed, parseFraction } from "@/lib/nutrition";
 import type { Recipe, RecipeIngredient } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ export default function RecipeFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { recipes, foods, addRecipe, updateRecipe } = useApp();
+  const { t } = useLanguage();
 
   const existing = id ? recipes.find((r) => r.id === id) : undefined;
 
@@ -25,11 +27,10 @@ export default function RecipeFormPage() {
     existing?.ingredients || []
   );
 
-  // Ingredient editing
   const [selectedFoodId, setSelectedFoodId] = useState("");
   const [qtyText, setQtyText] = useState("");
   const [unitText, setUnitText] = useState("");
-  const [gramsDirectInput, setGramsDirectInput] = useState("");
+  const [gramsDirectInputVal, setGramsDirectInputVal] = useState("");
   const [foodSearch, setFoodSearch] = useState("");
 
   const filteredFoods = foods.filter((f) =>
@@ -39,7 +40,7 @@ export default function RecipeFormPage() {
   function addIngredient() {
     const food = foods.find((f) => f.id === selectedFoodId);
     if (!food) {
-      toast.error("食材を選択してください");
+      toast.error(t("selectFood"));
       return;
     }
 
@@ -47,8 +48,8 @@ export default function RecipeFormPage() {
     const unit = unitText || food.defaultUnit;
     let grams: number;
 
-    if (gramsDirectInput) {
-      grams = parseFloat(gramsDirectInput) || 0;
+    if (gramsDirectInputVal) {
+      grams = parseFloat(gramsDirectInputVal) || 0;
     } else {
       grams = calculateGramsUsed(qv, unit, food);
     }
@@ -65,7 +66,7 @@ export default function RecipeFormPage() {
     setSelectedFoodId("");
     setQtyText("");
     setUnitText("");
-    setGramsDirectInput("");
+    setGramsDirectInputVal("");
     setFoodSearch("");
   }
 
@@ -87,7 +88,7 @@ export default function RecipeFormPage() {
 
   function handleSave() {
     if (!name.trim()) {
-      toast.error("レシピ名を入力してください");
+      toast.error(t("enterRecipeName"));
       return;
     }
 
@@ -102,10 +103,10 @@ export default function RecipeFormPage() {
 
     if (existing) {
       updateRecipe(recipe);
-      toast.success("レシピを更新しました");
+      toast.success(t("recipeUpdated"));
     } else {
       addRecipe(recipe);
-      toast.success("レシピを作成しました");
+      toast.success(t("recipeCreated"));
     }
     navigate(`/recipes/${recipe.id}`);
   }
@@ -113,30 +114,29 @@ export default function RecipeFormPage() {
   return (
     <div className="min-h-screen pb-20">
       <PageHeader
-        title={existing ? "レシピ編集" : "新しいレシピ"}
+        title={existing ? t("editRecipe") : t("newRecipe")}
         showBack
         action={
           <Button size="sm" onClick={handleSave}>
             <Save className="mr-1 h-4 w-4" />
-            保存
+            {t("save")}
           </Button>
         }
       />
 
       <div className="space-y-4 p-4">
-        {/* Basic Info */}
         <Card>
           <CardContent className="space-y-3 p-4">
             <div>
-              <label className="text-sm font-medium text-muted-foreground">レシピ名</label>
+              <label className="text-sm font-medium text-muted-foreground">{t("recipeName")}</label>
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="例: 親子丼"
+                placeholder={t("recipeNamePlaceholder")}
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-muted-foreground">人数</label>
+              <label className="text-sm font-medium text-muted-foreground">{t("servings")}</label>
               <Input
                 type="number"
                 value={servings}
@@ -148,10 +148,9 @@ export default function RecipeFormPage() {
           </CardContent>
         </Card>
 
-        {/* Ingredients */}
         <Card>
           <CardContent className="space-y-3 p-4">
-            <h3 className="font-semibold">🥘 材料</h3>
+            <h3 className="font-semibold">{t("ingredients")}</h3>
 
             {ingredients.map((ing, idx) => {
               const food = foods.find((f) => f.id === ing.foodId);
@@ -161,7 +160,7 @@ export default function RecipeFormPage() {
                   className="flex items-center justify-between rounded-lg border border-border p-2"
                 >
                   <div>
-                    <span className="font-medium">{food?.name || "不明"}</span>
+                    <span className="font-medium">{food?.name || t("unknown")}</span>
                     <span className="ml-2 text-sm text-muted-foreground">
                       {ing.quantityText || ing.quantityValue} {ing.unit}
                       <span className="ml-1">({Math.round(ing.gramsUsed)}g)</span>
@@ -177,11 +176,10 @@ export default function RecipeFormPage() {
               );
             })}
 
-            {/* Add ingredient form */}
             <div className="space-y-2 rounded-lg border border-dashed border-border p-3">
-              <label className="text-xs font-medium text-muted-foreground">食材を追加</label>
+              <label className="text-xs font-medium text-muted-foreground">{t("addIngredient")}</label>
               <Input
-                placeholder="食材名で検索..."
+                placeholder={t("searchFood")}
                 value={foodSearch}
                 onChange={(e) => setFoodSearch(e.target.value)}
               />
@@ -210,13 +208,13 @@ export default function RecipeFormPage() {
 
               <div className="flex gap-2">
                 <Input
-                  placeholder="数量 (例: 1/2)"
+                  placeholder={t("quantity")}
                   value={qtyText}
                   onChange={(e) => setQtyText(e.target.value)}
                   className="flex-1"
                 />
                 <Input
-                  placeholder="単位"
+                  placeholder={t("unit")}
                   value={unitText}
                   onChange={(e) => setUnitText(e.target.value)}
                   className="w-20"
@@ -224,24 +222,23 @@ export default function RecipeFormPage() {
               </div>
               <div className="flex gap-2">
                 <Input
-                  placeholder="直接g入力（任意）"
-                  value={gramsDirectInput}
-                  onChange={(e) => setGramsDirectInput(e.target.value)}
+                  placeholder={t("gramsDirectInput")}
+                  value={gramsDirectInputVal}
+                  onChange={(e) => setGramsDirectInputVal(e.target.value)}
                   className="flex-1"
                 />
                 <Button size="sm" variant="outline" onClick={addIngredient}>
                   <Plus className="mr-1 h-3 w-3" />
-                  追加
+                  {t("add")}
                 </Button>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Steps */}
         <Card>
           <CardContent className="space-y-3 p-4">
-            <h3 className="font-semibold">📝 手順</h3>
+            <h3 className="font-semibold">{t("steps")}</h3>
             {steps.map((step, idx) => (
               <div key={idx} className="flex gap-2">
                 <span className="mt-2 text-sm font-medium text-muted-foreground">
@@ -250,7 +247,7 @@ export default function RecipeFormPage() {
                 <Textarea
                   value={step}
                   onChange={(e) => handleStepChange(idx, e.target.value)}
-                  placeholder={`手順${idx + 1}を入力...`}
+                  placeholder={t("stepPlaceholder", { n: String(idx + 1) })}
                   rows={2}
                   className="flex-1"
                 />
@@ -264,7 +261,7 @@ export default function RecipeFormPage() {
             ))}
             <Button size="sm" variant="outline" onClick={addStep}>
               <Plus className="mr-1 h-3 w-3" />
-              手順を追加
+              {t("addStep")}
             </Button>
           </CardContent>
         </Card>

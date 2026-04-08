@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { useApp } from "@/store/AppContext";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { getWeeklyNutrients } from "@/lib/nutrition";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import PageHeader from "@/components/PageHeader";
@@ -9,6 +10,7 @@ export default function DiscoverPage() {
   const [searchParams] = useSearchParams();
   const selectedNutrient = searchParams.get("nutrient");
   const { nutrients, foods, recipes, cookingLogs } = useApp();
+  const { t } = useLanguage();
 
   const weeklyNutrients = getWeeklyNutrients(cookingLogs, recipes, foods, nutrients);
 
@@ -19,7 +21,6 @@ export default function DiscoverPage() {
 
   const activeNutrientId = selectedNutrient || lowNutrients[0]?.nutrientId;
 
-  // Find foods rich in this nutrient
   const richFoods = useMemo(() => {
     if (!activeNutrientId) return [];
     return foods
@@ -31,7 +32,6 @@ export default function DiscoverPage() {
       .sort((a, b) => b.amount - a.amount);
   }, [activeNutrientId, foods]);
 
-  // Find recipes using these foods
   const relatedRecipes = useMemo(() => {
     const richFoodIds = new Set(richFoods.slice(0, 5).map((rf) => rf.food.id));
     return recipes.filter((r) =>
@@ -43,13 +43,12 @@ export default function DiscoverPage() {
 
   return (
     <div className="min-h-screen pb-20">
-      <PageHeader title="栄養素から発見" />
+      <PageHeader title={t("discoverTitle")} />
 
       <div className="space-y-4 p-4">
-        {/* Nutrient selector */}
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">不足しがちな栄養素</CardTitle>
+            <CardTitle className="text-base">{t("lackingNutrients")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
@@ -72,18 +71,17 @@ export default function DiscoverPage() {
             </div>
             {cookingLogs.length === 0 && (
               <p className="mt-2 text-xs text-muted-foreground">
-                調理記録を追加すると、不足している栄養素が表示されます
+                {t("addCookingRecords")}
               </p>
             )}
           </CardContent>
         </Card>
 
-        {/* Rich foods */}
         {activeNutrient && (
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-base">
-                {activeNutrient.name}が豊富な食材
+                {t("richFoodsIn", { name: activeNutrient.name })}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -100,18 +98,17 @@ export default function DiscoverPage() {
                   </div>
                 ))}
                 {richFoods.length === 0 && (
-                  <p className="text-sm text-muted-foreground">該当する食材がありません</p>
+                  <p className="text-sm text-muted-foreground">{t("noMatchingFoods")}</p>
                 )}
               </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Related recipes */}
         {relatedRecipes.length > 0 && (
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-base">おすすめレシピ</CardTitle>
+              <CardTitle className="text-base">{t("suggestedRecipes")}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-1.5">

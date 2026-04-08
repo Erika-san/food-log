@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useApp } from "@/store/AppContext";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PageHeader from "@/components/PageHeader";
 import { Plus, Trash2, Edit, Save, X } from "lucide-react";
@@ -10,14 +11,15 @@ import { toast } from "sonner";
 import type { Nutrient, Food, FoodNutrient } from "@/types";
 
 export default function MasterDataPage() {
+  const { t } = useLanguage();
   return (
     <div className="min-h-screen pb-20">
-      <PageHeader title="マスターデータ" />
+      <PageHeader title={t("masterDataTitle")} />
       <div className="p-4">
         <Tabs defaultValue="foods">
           <TabsList className="w-full">
-            <TabsTrigger value="foods" className="flex-1">食材</TabsTrigger>
-            <TabsTrigger value="nutrients" className="flex-1">栄養素</TabsTrigger>
+            <TabsTrigger value="foods" className="flex-1">{t("foodsTab")}</TabsTrigger>
+            <TabsTrigger value="nutrients" className="flex-1">{t("nutrientsTab")}</TabsTrigger>
           </TabsList>
           <TabsContent value="foods" className="mt-4">
             <FoodManager />
@@ -33,6 +35,7 @@ export default function MasterDataPage() {
 
 function FoodManager() {
   const { foods, nutrients, addFood, updateFood, deleteFood } = useApp();
+  const { t } = useLanguage();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showAdd, setShowAdd] = useState(false);
 
@@ -40,7 +43,7 @@ function FoodManager() {
     <div className="space-y-3">
       <Button size="sm" onClick={() => setShowAdd(!showAdd)}>
         <Plus className="mr-1 h-3 w-3" />
-        食材を追加
+        {t("addFood")}
       </Button>
 
       {showAdd && (
@@ -49,7 +52,7 @@ function FoodManager() {
           onSave={(f) => {
             addFood(f);
             setShowAdd(false);
-            toast.success("食材を追加しました");
+            toast.success(t("foodAdded"));
           }}
           onCancel={() => setShowAdd(false)}
         />
@@ -65,7 +68,7 @@ function FoodManager() {
               onSave={(f) => {
                 updateFood(f);
                 setEditingId(null);
-                toast.success("食材を更新しました");
+                toast.success(t("foodUpdated"));
               }}
               onCancel={() => setEditingId(null)}
             />
@@ -82,7 +85,7 @@ function FoodManager() {
                   <button onClick={() => setEditingId(food.id)} className="text-muted-foreground hover:text-foreground">
                     <Edit className="h-4 w-4" />
                   </button>
-                  <button onClick={() => { deleteFood(food.id); toast.success("削除しました"); }} className="text-muted-foreground hover:text-destructive">
+                  <button onClick={() => { deleteFood(food.id); toast.success(t("deleted")); }} className="text-muted-foreground hover:text-destructive">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
@@ -106,6 +109,7 @@ function FoodForm({
   onSave: (f: Food) => void;
   onCancel: () => void;
 }) {
+  const { t } = useLanguage();
   const [name, setName] = useState(initial?.name || "");
   const [defaultUnit, setDefaultUnit] = useState(initial?.defaultUnit || "個");
   const [gramsPerUnit, setGramsPerUnit] = useState(initial?.gramsPerUnit?.toString() || "100");
@@ -127,7 +131,7 @@ function FoodForm({
 
   function handleSave() {
     if (!name.trim()) {
-      toast.error("食材名を入力してください");
+      toast.error(t("enterFoodName"));
       return;
     }
     onSave({
@@ -142,14 +146,14 @@ function FoodForm({
   return (
     <Card>
       <CardContent className="space-y-3 p-4">
-        <Input placeholder="食材名" value={name} onChange={(e) => setName(e.target.value)} />
+        <Input placeholder={t("foodName")} value={name} onChange={(e) => setName(e.target.value)} />
         <div className="flex gap-2">
-          <Input placeholder="単位" value={defaultUnit} onChange={(e) => setDefaultUnit(e.target.value)} className="w-24" />
-          <Input placeholder="1単位あたりのg" type="number" value={gramsPerUnit} onChange={(e) => setGramsPerUnit(e.target.value)} className="flex-1" />
+          <Input placeholder={t("unitLabel")} value={defaultUnit} onChange={(e) => setDefaultUnit(e.target.value)} className="w-24" />
+          <Input placeholder={t("gramsPerUnit")} type="number" value={gramsPerUnit} onChange={(e) => setGramsPerUnit(e.target.value)} className="flex-1" />
         </div>
 
         <div>
-          <p className="text-xs font-medium text-muted-foreground">栄養素（100gあたり）</p>
+          <p className="text-xs font-medium text-muted-foreground">{t("nutrientsPer100g")}</p>
           {foodNutrients.map((fn, idx) => (
             <div key={idx} className="mt-1 flex gap-2">
               <select
@@ -157,14 +161,14 @@ function FoodForm({
                 onChange={(e) => updateFoodNutrient(idx, "nutrientId", e.target.value)}
                 className="flex-1 rounded-md border border-input bg-background px-2 py-1 text-sm"
               >
-                <option value="">選択...</option>
+                <option value="">{t("selectNutrient")}</option>
                 {nutrients.map((n) => (
                   <option key={n.id} value={n.id}>{n.name} ({n.unit})</option>
                 ))}
               </select>
               <Input
                 type="number"
-                placeholder="量"
+                placeholder={t("amountLabel")}
                 value={fn.amountPer100g || ""}
                 onChange={(e) => updateFoodNutrient(idx, "amountPer100g", e.target.value)}
                 className="w-24"
@@ -176,18 +180,18 @@ function FoodForm({
           ))}
           <Button size="sm" variant="ghost" onClick={handleAddNutrient} className="mt-1">
             <Plus className="mr-1 h-3 w-3" />
-            栄養素を追加
+            {t("addNutrientItem")}
           </Button>
         </div>
 
         <div className="flex gap-2">
           <Button size="sm" onClick={handleSave}>
             <Save className="mr-1 h-3 w-3" />
-            保存
+            {t("save")}
           </Button>
           <Button size="sm" variant="ghost" onClick={onCancel}>
             <X className="mr-1 h-3 w-3" />
-            キャンセル
+            {t("cancel")}
           </Button>
         </div>
       </CardContent>
@@ -196,7 +200,8 @@ function FoodForm({
 }
 
 function NutrientManager() {
-  const { nutrients, addNutrient, updateNutrient, deleteNutrient } = useApp();
+  const { nutrients, addNutrient, deleteNutrient } = useApp();
+  const { t } = useLanguage();
   const [showAdd, setShowAdd] = useState(false);
   const [newName, setNewName] = useState("");
   const [newUnit, setNewUnit] = useState("mg");
@@ -214,28 +219,28 @@ function NutrientManager() {
     setNewUnit("mg");
     setNewRequired(false);
     setShowAdd(false);
-    toast.success("栄養素を追加しました");
+    toast.success(t("nutrientAdded"));
   }
 
   return (
     <div className="space-y-3">
       <Button size="sm" onClick={() => setShowAdd(!showAdd)}>
         <Plus className="mr-1 h-3 w-3" />
-        栄養素を追加
+        {t("addNutrient")}
       </Button>
 
       {showAdd && (
         <Card>
           <CardContent className="space-y-2 p-4">
-            <Input placeholder="栄養素名" value={newName} onChange={(e) => setNewName(e.target.value)} />
-            <Input placeholder="単位 (g, mg, kcal)" value={newUnit} onChange={(e) => setNewUnit(e.target.value)} className="w-32" />
+            <Input placeholder={t("nutrientName")} value={newName} onChange={(e) => setNewName(e.target.value)} />
+            <Input placeholder={t("unitPlaceholder")} value={newUnit} onChange={(e) => setNewUnit(e.target.value)} className="w-32" />
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={newRequired} onChange={(e) => setNewRequired(e.target.checked)} />
-              必須栄養素
+              {t("requiredNutrient")}
             </label>
             <div className="flex gap-2">
-              <Button size="sm" onClick={handleAdd}>保存</Button>
-              <Button size="sm" variant="ghost" onClick={() => setShowAdd(false)}>キャンセル</Button>
+              <Button size="sm" onClick={handleAdd}>{t("save")}</Button>
+              <Button size="sm" variant="ghost" onClick={() => setShowAdd(false)}>{t("cancel")}</Button>
             </div>
           </CardContent>
         </Card>
@@ -249,13 +254,13 @@ function NutrientManager() {
                 <span className="font-medium">{n.name}</span>
                 <span className="ml-2 text-xs text-muted-foreground">{n.unit}</span>
                 {n.isRequired && (
-                  <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">必須</span>
+                  <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">{t("required")}</span>
                 )}
               </div>
               <button
                 onClick={() => {
                   deleteNutrient(n.id);
-                  toast.success("削除しました");
+                  toast.success(t("deleted"));
                 }}
                 className="text-muted-foreground hover:text-destructive"
               >
