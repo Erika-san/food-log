@@ -25,7 +25,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const t = useCallback(
     (key: TranslationKey, params?: Record<string, string>) => {
-      let text = translations[key]?.[language] || key;
+      let text: string = translations[key]?.[language] || key;
       if (params) {
         for (const [k, v] of Object.entries(params)) {
           text = text.replace(`{${k}}`, v);
