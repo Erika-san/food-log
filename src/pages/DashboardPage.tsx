@@ -30,12 +30,9 @@ export default function DashboardPage() {
           <Link to="/recipes/new">
             <Button size="sm">
               <Plus className="mr-1 h-4 w-4" />
-              <Button size="sm">
-                <Plus className="mr-1 h-4 w-4" />
-                {t("addRecipe")}
-              </Button>
-            </Link>
-          </div>
+              {t("addRecipe")}
+            </Button>
+          </Link>
         }
       />
 
