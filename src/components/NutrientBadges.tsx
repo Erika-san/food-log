@@ -1,4 +1,5 @@
 import type { NutrientSummary } from "@/types";
+import { formatAmount } from "@/lib/nutrition";
 
 interface NutrientBadgesProps {
   summaries: NutrientSummary[];
@@ -27,7 +28,7 @@ export default function NutrientBadges({ summaries, compact }: NutrientBadgesPro
           }`}
         >
           {compact ? s.name.charAt(0) : s.name}
-          <span className="font-bold">{Math.round(s.amount)}</span>
+          <span className="font-bold">{formatAmount(s.amount)}</span>
           {!compact && <span className="opacity-75">{s.unit}</span>}
         </span>
       ))}

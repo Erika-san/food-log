@@ -110,6 +110,10 @@ export const translations = {
   unitPlaceholder: { ja: "単位 (g, mg, kcal)", en: "Unit (g, mg, kcal)" },
   requiredNutrient: { ja: "必須栄養素", en: "Required nutrient" },
   nutrientAdded: { ja: "栄養素を追加しました", en: "Nutrient added" },
+  quickAddFood: { ja: "食材を新規登録", en: "Quick Add Food" },
+  editFood: { ja: "食材を編集", en: "Edit Food" },
+  foodNotInList: { ja: "食材が見つからない？", en: "Food not in list?" },
+  createNewFood: { ja: "新しい食材を登録", en: "Create new food" },
 
   // Language
   language: { ja: "言語", en: "Language" },

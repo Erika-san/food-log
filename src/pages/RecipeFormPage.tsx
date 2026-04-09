@@ -2,14 +2,15 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useApp } from "@/store/AppContext";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { calculateGramsUsed, parseFraction } from "@/lib/nutrition";
-import type { Recipe, RecipeIngredient } from "@/types";
+import { calculateGramsUsed, parseFraction, formatAmount } from "@/lib/nutrition";
+import type { Recipe, RecipeIngredient, Food } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import PageHeader from "@/components/PageHeader";
-import { Plus, Trash2, Save } from "lucide-react";
+import FoodFormDialog from "@/components/FoodFormDialog";
+import { Plus, Trash2, Save, Edit, PlusCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export default function RecipeFormPage() {
@@ -32,6 +33,8 @@ export default function RecipeFormPage() {
   const [unitText, setUnitText] = useState("");
   const [gramsDirectInputVal, setGramsDirectInputVal] = useState("");
   const [foodSearch, setFoodSearch] = useState("");
+  const [showFoodDialog, setShowFoodDialog] = useState(false);
+  const [editingFood, setEditingFood] = useState<Food | undefined>(undefined);
 
   const filteredFoods = foods.filter((f) =>
     f.name.toLowerCase().includes(foodSearch.toLowerCase())
@@ -163,15 +166,25 @@ export default function RecipeFormPage() {
                     <span className="font-medium">{food?.name || t("unknown")}</span>
                     <span className="ml-2 text-sm text-muted-foreground">
                       {ing.quantityText || ing.quantityValue} {ing.unit}
-                      <span className="ml-1">({Math.round(ing.gramsUsed)}g)</span>
+                      <span className="ml-1">({formatAmount(ing.gramsUsed)}g)</span>
                     </span>
                   </div>
-                  <button
-                    onClick={() => removeIngredient(idx)}
-                    className="text-muted-foreground hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                  <div className="flex gap-1">
+                    {food && (
+                      <button
+                        onClick={() => { setEditingFood(food); setShowFoodDialog(true); }}
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </button>
+                    )}
+                    <button
+                      onClick={() => removeIngredient(idx)}
+                      className="text-muted-foreground hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               );
             })}
@@ -205,6 +218,16 @@ export default function RecipeFormPage() {
                   ))}
                 </div>
               )}
+
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => { setEditingFood(undefined); setShowFoodDialog(true); }}
+                className="text-xs"
+              >
+                <PlusCircle className="mr-1 h-3 w-3" />
+                {t("createNewFood")}
+              </Button>
 
               <div className="flex gap-2">
                 <Input
@@ -266,6 +289,19 @@ export default function RecipeFormPage() {
           </CardContent>
         </Card>
       </div>
+
+      <FoodFormDialog
+        open={showFoodDialog}
+        onOpenChange={setShowFoodDialog}
+        initial={editingFood}
+        onSaved={(food) => {
+          if (!editingFood) {
+            setSelectedFoodId(food.id);
+            setUnitText(food.defaultUnit);
+            setFoodSearch(food.name);
+          }
+        }}
+      />
     </div>
   );
 }

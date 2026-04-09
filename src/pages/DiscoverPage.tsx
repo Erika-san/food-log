@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { useApp } from "@/store/AppContext";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { getWeeklyNutrients } from "@/lib/nutrition";
+import { getWeeklyNutrients, formatAmount } from "@/lib/nutrition";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import PageHeader from "@/components/PageHeader";
 
@@ -64,7 +64,7 @@ export default function DiscoverPage() {
                 >
                   {n.name}
                   <span className="ml-1 opacity-75">
-                    {Math.round(n.amount)}{n.unit}
+                    {formatAmount(n.amount)}{n.unit}
                   </span>
                 </Link>
               ))}
@@ -93,7 +93,7 @@ export default function DiscoverPage() {
                   >
                     <span className="text-sm font-medium">{food.name}</span>
                     <span className="text-sm text-muted-foreground">
-                      {amount < 1 ? amount.toFixed(2) : Math.round(amount)} {activeNutrient.unit}/100g
+                      {formatAmount(amount)} {activeNutrient.unit}/100g
                     </span>
                   </div>
                 ))}

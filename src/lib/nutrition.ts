@@ -49,6 +49,13 @@ export function calculateGramsUsed(
   return quantityValue * food.gramsPerUnit;
 }
 
+export function formatAmount(value: number): string {
+  if (value === 0) return "0";
+  if (value < 0.1) return value.toFixed(2);
+  if (value < 10) return value.toFixed(1);
+  return value.toFixed(1);
+}
+
 export function parseFraction(text: string): number {
   const trimmed = text.trim();
   if (!trimmed) return 0;

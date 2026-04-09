@@ -1,7 +1,7 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useApp } from "@/store/AppContext";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { calculateRecipeNutrients } from "@/lib/nutrition";
+import { calculateRecipeNutrients, formatAmount } from "@/lib/nutrition";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import NutrientBadges from "@/components/NutrientBadges";
@@ -81,7 +81,7 @@ export default function RecipeDetailPage() {
                   <div key={n.nutrientId} className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">{n.name}</span>
                     <span>
-                      {n.amount < 1 ? n.amount.toFixed(2) : Math.round(n.amount)} {n.unit}
+                      {formatAmount(n.amount)} {n.unit}
                     </span>
                   </div>
                 ))}
