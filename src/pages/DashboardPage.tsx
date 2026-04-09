@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import NutrientBadges from "@/components/NutrientBadges";
 import PageHeader from "@/components/PageHeader";
-import LanguageToggle from "@/components/LanguageToggle";
+
 
 export default function DashboardPage() {
   const { recipes, cookingLogs, foods, nutrients } = useApp();
