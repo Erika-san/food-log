@@ -1,5 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import LanguageToggle from "@/components/LanguageToggle";
 
 interface PageHeaderProps {
   title: string;
@@ -18,6 +19,7 @@ export default function PageHeader({ title, showBack, action }: PageHeaderProps)
         </button>
       )}
       <h1 className="flex-1 text-lg font-bold">{title}</h1>
+      <LanguageToggle />
       {action}
     </header>
   );
