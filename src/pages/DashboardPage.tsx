@@ -1,6 +1,6 @@
 import { useApp } from "@/store/AppContext";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { getWeeklyNutrients, calculateRecipeNutrients } from "@/lib/nutrition";
+import { getWeeklyNutrients, calculateRecipeNutrients, formatAmount } from "@/lib/nutrition";
 import { Link } from "react-router-dom";
 import { Plus, ChefHat, TrendingDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -53,7 +53,7 @@ export default function DashboardPage() {
                     <div key={n.nutrientId} className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">{n.name}</span>
                       <span className="font-semibold">
-                        {Math.round(n.amount)} {n.unit}
+{formatAmount(n.amount)} {n.unit}
                       </span>
                     </div>
                   ))}
@@ -82,7 +82,7 @@ export default function DashboardPage() {
                   >
                     <span className="text-sm">{n.name}</span>
                     <span className="text-xs text-muted-foreground">
-                      {Math.round(n.amount)} {n.unit}
+                      {formatAmount(n.amount)} {n.unit}
                     </span>
                   </Link>
                 ))}
