@@ -169,12 +169,22 @@ export default function RecipeFormPage() {
                       <span className="ml-1">({formatAmount(ing.gramsUsed)}g)</span>
                     </span>
                   </div>
-                  <button
-                    onClick={() => removeIngredient(idx)}
-                    className="text-muted-foreground hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                  <div className="flex gap-1">
+                    {food && (
+                      <button
+                        onClick={() => { setEditingFood(food); setShowFoodDialog(true); }}
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </button>
+                    )}
+                    <button
+                      onClick={() => removeIngredient(idx)}
+                      className="text-muted-foreground hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               );
             })}
