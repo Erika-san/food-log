@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import NutrientBadges from "@/components/NutrientBadges";
 import PageHeader from "@/components/PageHeader";
-import LanguageToggle from "@/components/LanguageToggle";
+
 
 export default function DashboardPage() {
   const { recipes, cookingLogs, foods, nutrients } = useApp();
@@ -27,15 +27,12 @@ export default function DashboardPage() {
       <PageHeader
         title={t("dashboardTitle")}
         action={
-          <div className="flex items-center gap-2">
-            <LanguageToggle />
-            <Link to="/recipes/new">
-              <Button size="sm">
-                <Plus className="mr-1 h-4 w-4" />
-                {t("addRecipe")}
-              </Button>
-            </Link>
-          </div>
+          <Link to="/recipes/new">
+            <Button size="sm">
+              <Plus className="mr-1 h-4 w-4" />
+              {t("addRecipe")}
+            </Button>
+          </Link>
         }
       />
 
