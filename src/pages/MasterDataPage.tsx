@@ -149,7 +149,7 @@ function FoodForm({
         <Input placeholder={t("foodName")} value={name} onChange={(e) => setName(e.target.value)} />
         <div className="flex gap-2">
           <Input placeholder={t("unitLabel")} value={defaultUnit} onChange={(e) => setDefaultUnit(e.target.value)} className="w-24" />
-          <Input placeholder={t("gramsPerUnit")} type="number" value={gramsPerUnit} onChange={(e) => setGramsPerUnit(e.target.value)} className="flex-1" />
+          <Input placeholder={t("gramsPerUnit")} type="number" step="any" value={gramsPerUnit} onChange={(e) => setGramsPerUnit(e.target.value)} className="flex-1" />
         </div>
 
         <div>
