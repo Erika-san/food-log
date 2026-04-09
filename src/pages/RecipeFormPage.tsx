@@ -3,13 +3,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useApp } from "@/store/AppContext";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { calculateGramsUsed, parseFraction, formatAmount } from "@/lib/nutrition";
-import type { Recipe, RecipeIngredient } from "@/types";
+import type { Recipe, RecipeIngredient, Food } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import PageHeader from "@/components/PageHeader";
-import { Plus, Trash2, Save } from "lucide-react";
+import FoodFormDialog from "@/components/FoodFormDialog";
+import { Plus, Trash2, Save, Edit, PlusCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export default function RecipeFormPage() {
@@ -32,6 +33,8 @@ export default function RecipeFormPage() {
   const [unitText, setUnitText] = useState("");
   const [gramsDirectInputVal, setGramsDirectInputVal] = useState("");
   const [foodSearch, setFoodSearch] = useState("");
+  const [showFoodDialog, setShowFoodDialog] = useState(false);
+  const [editingFood, setEditingFood] = useState<Food | undefined>(undefined);
 
   const filteredFoods = foods.filter((f) =>
     f.name.toLowerCase().includes(foodSearch.toLowerCase())
