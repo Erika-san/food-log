@@ -219,6 +219,16 @@ export default function RecipeFormPage() {
                 </div>
               )}
 
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => { setEditingFood(undefined); setShowFoodDialog(true); }}
+                className="text-xs"
+              >
+                <PlusCircle className="mr-1 h-3 w-3" />
+                {t("createNewFood")}
+              </Button>
+
               <div className="flex gap-2">
                 <Input
                   placeholder={t("quantity")}
