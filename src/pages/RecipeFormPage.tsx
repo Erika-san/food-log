@@ -289,6 +289,19 @@ export default function RecipeFormPage() {
           </CardContent>
         </Card>
       </div>
+
+      <FoodFormDialog
+        open={showFoodDialog}
+        onOpenChange={setShowFoodDialog}
+        initial={editingFood}
+        onSaved={(food) => {
+          if (!editingFood) {
+            setSelectedFoodId(food.id);
+            setUnitText(food.defaultUnit);
+            setFoodSearch(food.name);
+          }
+        }}
+      />
     </div>
   );
 }
