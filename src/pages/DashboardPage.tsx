@@ -27,9 +27,9 @@ export default function DashboardPage() {
       <PageHeader
         title={t("dashboardTitle")}
         action={
-          <div className="flex items-center gap-2">
-            <LanguageToggle />
-            <Link to="/recipes/new">
+          <Link to="/recipes/new">
+            <Button size="sm">
+              <Plus className="mr-1 h-4 w-4" />
               <Button size="sm">
                 <Plus className="mr-1 h-4 w-4" />
                 {t("addRecipe")}
