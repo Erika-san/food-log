@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useApp } from "@/store/AppContext";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { calculateGramsUsed, parseFraction } from "@/lib/nutrition";
+import { calculateGramsUsed, parseFraction, formatAmount } from "@/lib/nutrition";
 import type { Recipe, RecipeIngredient } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -163,7 +163,7 @@ export default function RecipeFormPage() {
                     <span className="font-medium">{food?.name || t("unknown")}</span>
                     <span className="ml-2 text-sm text-muted-foreground">
                       {ing.quantityText || ing.quantityValue} {ing.unit}
-                      <span className="ml-1">({Math.round(ing.gramsUsed)}g)</span>
+                      <span className="ml-1">({formatAmount(ing.gramsUsed)}g)</span>
                     </span>
                   </div>
                   <button
